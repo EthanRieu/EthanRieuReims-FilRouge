@@ -8,6 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -120,6 +125,12 @@ fun ProductCatalogContainer(
         onSortOrderChange = { newOrder ->
             sortOrder = newOrder
         },
+        onResetFilters = {
+            searchQuery = ""
+            showOnlyInStock = false
+            selectedCategory = null
+            showOnlyFavorites = false
+        },
         onProductClick = onProductClick,
         modifier = modifier
     )
@@ -143,7 +154,8 @@ fun ProductCatalogScreen(
     sortOrder: SortOrder,
     onSortOrderChange: (SortOrder) -> Unit,
     onProductClick: (ProductUi) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onResetFilters: () -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier
@@ -175,6 +187,20 @@ fun ProductCatalogScreen(
                 label = {
                     Text(text = "Rechercher un produit")
                 },
+                leadingIcon = {
+                    Icon(imageVector = Icons.Filled.Search, contentDescription = null)
+                },
+                trailingIcon = {
+                    if (searchQuery.isNotEmpty()) {
+                        IconButton(onClick = { onSearchQueryChange("") }) {
+                            Icon(
+                                imageVector = Icons.Filled.Clear,
+                                contentDescription = "Effacer la recherche"
+                            )
+                        }
+                    }
+                },
+                singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -210,6 +236,12 @@ fun ProductCatalogScreen(
                 selectedCategory = selectedCategory,
                 onCategoryClick = onCategoryClick
             )
+        }
+
+        if (products.isEmpty()) {
+            item {
+                EmptyCatalogMessage(onResetFiltersClick = onResetFilters)
+            }
         }
 
         items(

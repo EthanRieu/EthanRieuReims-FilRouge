@@ -75,6 +75,7 @@ fun ProductDetailScreen(
 
         AddToCartButton(
             onClick = onAddToCartClick,
+            enabled = product.stock > 0,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp)

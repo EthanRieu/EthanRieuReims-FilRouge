@@ -16,6 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.tps.ui.format.formatDiscount
+import com.example.tps.ui.format.formatPrice
 
 @Composable
 fun ProductImage(
@@ -63,11 +65,11 @@ fun ProductPriceCard(
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = "$price €",
+                text = formatPrice(price),
                 style = MaterialTheme.typography.headlineSmall
             )
             Text(
-                text = "Remise : $discountPercentage %",
+                text = "Remise : ${formatDiscount(discountPercentage)}",
                 style = MaterialTheme.typography.bodyMedium
             )
         }
@@ -154,12 +156,14 @@ fun ProductWarrantyField(
 @Composable
 fun AddToCartButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier
+        modifier = modifier,
+        enabled = enabled
     ) {
-        Text(text = "Ajouter au panier")
+        Text(text = if (enabled) "Ajouter au panier" else "Produit indisponible")
     }
 }

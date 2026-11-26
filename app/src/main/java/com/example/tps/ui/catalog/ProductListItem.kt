@@ -1,5 +1,6 @@
 package com.example.tps.ui.catalog
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,7 +19,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.tps.data.ProductUi
 import com.example.tps.data.sampleProduct
+import com.example.tps.ui.components.DiscountBadge
 import com.example.tps.ui.components.FavoriteButton
+import com.example.tps.ui.components.StockBadge
+import com.example.tps.ui.format.formatDiscount
+import com.example.tps.ui.format.formatPrice
+import com.example.tps.ui.format.formatRating
 import com.example.tps.ui.theme.TPsTheme
 
 @Composable
@@ -61,11 +67,21 @@ fun ProductListItem(
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "${product.price} € • ★ ${product.rating}",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "${formatPrice(product.price)} • ★ ${formatRating(product.rating)}",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                if (product.discountPercentage > 0) {
+                    DiscountBadge(label = formatDiscount(product.discountPercentage))
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            StockBadge(stock = product.stock)
             Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = onClick) {
                 Text(text = "Voir le produit")

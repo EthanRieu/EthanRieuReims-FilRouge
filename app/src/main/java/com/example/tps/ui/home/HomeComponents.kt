@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.tps.data.ProductUi
 import com.example.tps.ui.components.CategoryChip
+import com.example.tps.ui.format.formatPrice
+import com.example.tps.ui.format.formatRating
 
 @Composable
 fun HomeHeader(
@@ -103,11 +105,11 @@ fun ProductQuickInfoRow(
 ) {
     Row(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "$price €",
+            text = formatPrice(price),
             modifier = Modifier.weight(1f)
         )
         Text(
-            text = "★ $rating",
+            text = "★ ${formatRating(rating)}",
             modifier = Modifier.weight(1f)
         )
         Text(
