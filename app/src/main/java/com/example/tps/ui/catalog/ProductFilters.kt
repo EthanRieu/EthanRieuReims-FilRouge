@@ -32,3 +32,20 @@ fun filterProducts(
         matchesSearch && matchesStock && matchesCategory && matchesFavorites
     }
 }
+
+enum class SortOrder(val label: String) {
+    DEFAULT("Par défaut"),
+    PRICE_ASCENDING("Prix croissant"),
+    PRICE_DESCENDING("Prix décroissant"),
+    BEST_RATED("Meilleures notes")
+}
+
+// Trie la liste (appliqué après les filtres)
+fun sortProducts(products: List<ProductUi>, sortOrder: SortOrder): List<ProductUi> {
+    return when (sortOrder) {
+        SortOrder.DEFAULT -> products
+        SortOrder.PRICE_ASCENDING -> products.sortedBy { it.price }
+        SortOrder.PRICE_DESCENDING -> products.sortedByDescending { it.price }
+        SortOrder.BEST_RATED -> products.sortedByDescending { it.rating }
+    }
+}

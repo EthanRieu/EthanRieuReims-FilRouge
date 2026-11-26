@@ -3,6 +3,7 @@ package com.example.tps.ui.catalog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -56,6 +58,10 @@ fun ProductCatalogContainer(
         mutableStateOf(false)
     }
 
+    var sortOrder by rememberSaveable {
+        mutableStateOf(SortOrder.DEFAULT)
+    }
+
     // Catégorie demandée depuis un autre écran (ex. clic sur une catégorie de l'accueil)
     LaunchedEffect(requestedCategory) {
         if (requestedCategory != null) {
@@ -65,9 +71,9 @@ fun ProductCatalogContainer(
     }
 
     val filteredProducts = remember(
-        products, searchQuery, showOnlyInStock, selectedCategory, showOnlyFavorites, favoriteProductIds
+        products, searchQuery, showOnlyInStock, selectedCategory, showOnlyFavorites, favoriteProductIds, sortOrder
     ) {
-        filterProducts(
+        val filtered = filterProducts(
             products = products,
             searchQuery = searchQuery,
             showOnlyInStock = showOnlyInStock,
@@ -75,6 +81,7 @@ fun ProductCatalogContainer(
             showOnlyFavorites = showOnlyFavorites,
             favoriteProductIds = favoriteProductIds
         )
+        sortProducts(filtered, sortOrder)
     }
 
     fun toggleFavorite(productId: Int) {
@@ -109,6 +116,10 @@ fun ProductCatalogContainer(
         onToggleFavoritesFilter = {
             showOnlyFavorites = !showOnlyFavorites
         },
+        sortOrder = sortOrder,
+        onSortOrderChange = { newOrder ->
+            sortOrder = newOrder
+        },
         onProductClick = onProductClick,
         modifier = modifier
     )
@@ -129,6 +140,8 @@ fun ProductCatalogScreen(
     onFavoriteClick: (Int) -> Unit,
     showOnlyFavorites: Boolean,
     onToggleFavoritesFilter: () -> Unit,
+    sortOrder: SortOrder,
+    onSortOrderChange: (SortOrder) -> Unit,
     onProductClick: (ProductUi) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -177,11 +190,18 @@ fun ProductCatalogScreen(
         }
 
         item {
-            Text(
-                text = "${products.size} produit(s) affiché(s)",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "${products.size} produit(s) affiché(s)",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.weight(1f)
+                )
+                SortMenu(
+                    sortOrder = sortOrder,
+                    onSortOrderChange = onSortOrderChange
+                )
+            }
         }
 
         item {
@@ -257,6 +277,8 @@ fun ProductCatalogScreenStatelessPreview() {
             onFavoriteClick = {},
             showOnlyFavorites = false,
             onToggleFavoritesFilter = {},
+            sortOrder = SortOrder.DEFAULT,
+            onSortOrderChange = {},
             onProductClick = {}
         )
     }
