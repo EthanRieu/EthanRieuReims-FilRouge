@@ -6,8 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import com.example.tps.data.sampleCategories
-import com.example.tps.data.sampleProducts
 import com.example.tps.ui.ProductExplorerApp
 import com.example.tps.ui.theme.TPsTheme
 
@@ -18,8 +16,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             TPsTheme {
                 ProductExplorerApp(
-                    products = sampleProducts(),
-                    categories = sampleCategories(),
                     modifier = Modifier.fillMaxSize()
                 )
             }

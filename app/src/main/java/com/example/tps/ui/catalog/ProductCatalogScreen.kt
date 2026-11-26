@@ -17,18 +17,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tps.R
 import com.example.tps.data.ProductUi
 import com.example.tps.data.sampleCategories
@@ -37,104 +32,29 @@ import com.example.tps.ui.components.CategoryRow
 import com.example.tps.ui.format.frenchPluralQuantity
 import com.example.tps.ui.theme.TPsTheme
 
-// Composable stateful : possède l'état du catalogue (recherche, filtres, favoris)
+// Passerelle entre le ViewModel et l'écran stateless : lit l'état et transmet les callbacks
 @Composable
 fun ProductCatalogContainer(
-    products: List<ProductUi>,
-    categories: List<String>,
     onProductClick: (ProductUi) -> Unit,
     modifier: Modifier = Modifier,
-    requestedCategory: String? = null,
-    onRequestedCategoryHandled: () -> Unit = {}
+    viewModel: ProductCatalogViewModel = viewModel()
 ) {
-    var searchQuery by rememberSaveable {
-        mutableStateOf("")
-    }
-
-    var showOnlyInStock by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    var favoriteProductIds by rememberSaveable {
-        mutableStateOf(listOf<Int>())
-    }
-
-    var selectedCategory by rememberSaveable {
-        mutableStateOf<String?>(null)
-    }
-
-    var showOnlyFavorites by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    var sortOrder by rememberSaveable {
-        mutableStateOf(SortOrder.DEFAULT)
-    }
-
-    // Catégorie demandée depuis un autre écran (ex. clic sur une catégorie de l'accueil)
-    LaunchedEffect(requestedCategory) {
-        if (requestedCategory != null) {
-            selectedCategory = requestedCategory
-            onRequestedCategoryHandled()
-        }
-    }
-
-    val filteredProducts = remember(
-        products, searchQuery, showOnlyInStock, selectedCategory, showOnlyFavorites, favoriteProductIds, sortOrder
-    ) {
-        val filtered = filterProducts(
-            products = products,
-            searchQuery = searchQuery,
-            showOnlyInStock = showOnlyInStock,
-            selectedCategory = selectedCategory,
-            showOnlyFavorites = showOnlyFavorites,
-            favoriteProductIds = favoriteProductIds
-        )
-        sortProducts(filtered, sortOrder)
-    }
-
-    fun toggleFavorite(productId: Int) {
-        favoriteProductIds = if (favoriteProductIds.contains(productId)) {
-            favoriteProductIds - productId
-        } else {
-            favoriteProductIds + productId
-        }
-    }
-
     ProductCatalogScreen(
-        products = filteredProducts,
-        categories = categories,
-        selectedCategory = selectedCategory,
-        onCategoryClick = { category ->
-            // Re-cliquer sur la catégorie active la désélectionne
-            selectedCategory = if (selectedCategory == category) null else category
-        },
-        searchQuery = searchQuery,
-        onSearchQueryChange = { newValue ->
-            searchQuery = newValue
-        },
-        showOnlyInStock = showOnlyInStock,
-        onToggleStockFilter = {
-            showOnlyInStock = !showOnlyInStock
-        },
-        favoriteProductIds = favoriteProductIds,
-        onFavoriteClick = { productId ->
-            toggleFavorite(productId)
-        },
-        showOnlyFavorites = showOnlyFavorites,
-        onToggleFavoritesFilter = {
-            showOnlyFavorites = !showOnlyFavorites
-        },
-        sortOrder = sortOrder,
-        onSortOrderChange = { newOrder ->
-            sortOrder = newOrder
-        },
-        onResetFilters = {
-            searchQuery = ""
-            showOnlyInStock = false
-            selectedCategory = null
-            showOnlyFavorites = false
-        },
+        products = viewModel.filteredProducts,
+        categories = viewModel.categories,
+        selectedCategory = viewModel.selectedCategory,
+        onCategoryClick = viewModel::onCategoryClick,
+        searchQuery = viewModel.searchQuery,
+        onSearchQueryChange = viewModel::onSearchQueryChange,
+        showOnlyInStock = viewModel.showOnlyInStock,
+        onToggleStockFilter = viewModel::onToggleStockFilter,
+        favoriteProductIds = viewModel.favoriteProductIds,
+        onFavoriteClick = viewModel::onFavoriteClick,
+        showOnlyFavorites = viewModel.showOnlyFavorites,
+        onToggleFavoritesFilter = viewModel::onToggleFavoritesFilter,
+        sortOrder = viewModel.sortOrder,
+        onSortOrderChange = viewModel::onSortOrderChange,
+        onResetFilters = viewModel::onResetFilters,
         onProductClick = onProductClick,
         modifier = modifier
     )
@@ -266,40 +186,14 @@ fun ProductCatalogScreen(
     }
 }
 
+// Les previews testent directement l'écran stateless : pas besoin de ViewModel
 @Preview(
     showBackground = true,
     name = "Catalogue - Light Theme"
 )
 @Composable
-fun ProductCatalogContainerLightPreview() {
+fun ProductCatalogScreenLightPreview() {
     TPsTheme(darkTheme = false) {
-        ProductCatalogContainer(
-            products = sampleProducts(),
-            categories = sampleCategories(),
-            onProductClick = {}
-        )
-    }
-}
-
-@Preview(
-    showBackground = true,
-    name = "Catalogue - Dark Theme"
-)
-@Composable
-fun ProductCatalogContainerDarkPreview() {
-    TPsTheme(darkTheme = true) {
-        ProductCatalogContainer(
-            products = sampleProducts(),
-            categories = sampleCategories(),
-            onProductClick = {}
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ProductCatalogScreenStatelessPreview() {
-    TPsTheme {
         ProductCatalogScreen(
             products = sampleProducts(),
             categories = sampleCategories(),
@@ -310,6 +204,33 @@ fun ProductCatalogScreenStatelessPreview() {
             showOnlyInStock = false,
             onToggleStockFilter = {},
             favoriteProductIds = listOf(1),
+            onFavoriteClick = {},
+            showOnlyFavorites = false,
+            onToggleFavoritesFilter = {},
+            sortOrder = SortOrder.DEFAULT,
+            onSortOrderChange = {},
+            onProductClick = {}
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    name = "Catalogue - Dark Theme"
+)
+@Composable
+fun ProductCatalogScreenDarkPreview() {
+    TPsTheme(darkTheme = true) {
+        ProductCatalogScreen(
+            products = sampleProducts(),
+            categories = sampleCategories(),
+            selectedCategory = null,
+            onCategoryClick = {},
+            searchQuery = "audio",
+            onSearchQueryChange = {},
+            showOnlyInStock = true,
+            onToggleStockFilter = {},
+            favoriteProductIds = listOf(2),
             onFavoriteClick = {},
             showOnlyFavorites = false,
             onToggleFavoritesFilter = {},

@@ -26,7 +26,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * Tests d'interface du catalogue : le container (avec son état) et l'écran stateless.
+ * Tests d'interface du catalogue : le container (relié au ViewModel) et l'écran stateless.
  * Données : 6 produits, dont 2 en rupture (Casque Audio Pulse, Aspirateur Robot CleanBot).
  */
 @RunWith(AndroidJUnit4::class)
@@ -39,8 +39,6 @@ class ProductCatalogTest {
         rule.setContent {
             TPsTheme {
                 ProductCatalogContainer(
-                    products = sampleProducts(),
-                    categories = sampleCategories(),
                     onProductClick = {}
                 )
             }

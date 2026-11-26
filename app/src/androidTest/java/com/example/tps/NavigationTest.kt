@@ -1,10 +1,13 @@
 package com.example.tps
 
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -13,8 +16,6 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.tps.data.sampleCategories
-import com.example.tps.data.sampleProducts
 import com.example.tps.ui.ProductExplorerApp
 import com.example.tps.ui.theme.TPsTheme
 import org.junit.Before
@@ -32,10 +33,7 @@ class NavigationTest {
     fun setUp() {
         rule.setContent {
             TPsTheme {
-                ProductExplorerApp(
-                    products = sampleProducts(),
-                    categories = sampleCategories()
-                )
+                ProductExplorerApp()
             }
         }
     }
@@ -67,6 +65,26 @@ class NavigationTest {
         rule.onAllNodesWithText("Voir le produit").onFirst().performClick()
         rule.onNodeWithText("Ajouter au panier").performScrollTo().performClick()
         rule.onNodeWithText("Smartphone Toto X ajouté au panier").assertIsDisplayed()
+    }
+
+    @Test
+    fun favori_partage_entre_le_detail_et_le_catalogue() {
+        rule.onAllNodesWithText("Voir le produit").onFirst().performClick()
+        rule.onNodeWithContentDescription("Ajouter aux favoris").performClick()
+        rule.onNodeWithContentDescription("Retirer des favoris").assertIsDisplayed()
+
+        rule.onNodeWithContentDescription("Retour").performClick()
+        rule.onNodeWithText("Favoris (1)").assertIsDisplayed()
+        rule.onAllNodesWithContentDescription("Retirer des favoris").assertCountEquals(1)
+    }
+
+    @Test
+    fun categorie_de_l_accueil_ouvre_le_catalogue_filtre() {
+        rule.onNodeWithText("Accueil").performClick()
+        rule.onNodeWithText("Maison").performClick()
+        rule.onNodeWithText("Catalogue produits").assertIsDisplayed()
+        rule.onNodeWithText("2 produits affichés").assertIsDisplayed()
+        rule.onNodeWithText("Maison").assertIsSelected()
     }
 
     @Test

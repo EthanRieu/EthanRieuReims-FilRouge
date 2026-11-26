@@ -21,17 +21,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.tps.R
 import com.example.tps.data.ProductUi
 import com.example.tps.data.sampleProduct
+import com.example.tps.ui.components.FavoriteButton
 import com.example.tps.ui.theme.TPsTheme
 import kotlinx.coroutines.launch
 
 /**
- * Écran de détail complet : barre du haut avec retour, contenu du TP4 et
+ * Écran de détail complet : barre du haut avec retour et favori, contenu du TP4 et
  * confirmation « ajouté au panier » dans une snackbar.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductDetailRoute(
     product: ProductUi,
+    isFavorite: Boolean,
+    onFavoriteClick: () -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -57,6 +60,12 @@ fun ProductDetailRoute(
                             contentDescription = stringResource(R.string.back)
                         )
                     }
+                },
+                actions = {
+                    FavoriteButton(
+                        isFavorite = isFavorite,
+                        onClick = onFavoriteClick
+                    )
                 }
             )
         },
@@ -80,6 +89,8 @@ fun ProductDetailRoutePreview() {
     TPsTheme {
         ProductDetailRoute(
             product = sampleProduct(),
+            isFavorite = true,
+            onFavoriteClick = {},
             onBackClick = {}
         )
     }

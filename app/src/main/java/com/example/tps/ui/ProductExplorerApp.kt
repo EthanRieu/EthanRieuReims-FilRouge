@@ -20,15 +20,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.tps.R
-import com.example.tps.data.ProductUi
-import com.example.tps.data.sampleCategories
-import com.example.tps.data.sampleProducts
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tps.ui.catalog.ProductCatalogContainer
+import com.example.tps.ui.catalog.ProductCatalogViewModel
 import com.example.tps.ui.detail.ProductDetailRoute
 import com.example.tps.ui.home.ProductHomeScreen
-import com.example.tps.ui.theme.TPsTheme
 
 enum class AppTab(@StringRes val labelRes: Int, val icon: ImageVector) {
     HOME(R.string.tab_home, Icons.Filled.Home),
@@ -40,21 +37,21 @@ enum class AppTab(@StringRes val labelRes: Int, val icon: ImageVector) {
  *
  * La navigation est un simple état Compose (onglet courant + produit ouvert),
  * conservé à la rotation grâce à rememberSaveable.
+ * Le ViewModel du catalogue est partagé par les écrans (même instance dans l'activité) :
+ * les favoris sont donc les mêmes dans le catalogue et dans le détail.
  */
 @Composable
 fun ProductExplorerApp(
-    products: List<ProductUi>,
-    categories: List<String>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    catalogViewModel: ProductCatalogViewModel = viewModel()
 ) {
     var currentTab by rememberSaveable { mutableStateOf(AppTab.CATALOG) }
     var selectedProductId by rememberSaveable { mutableStateOf<Int?>(null) }
-    var requestedCategory by rememberSaveable { mutableStateOf<String?>(null) }
 
     // Conserve l'état de chaque onglet (recherche, filtres, défilement) quand on change d'écran
     val stateHolder = rememberSaveableStateHolder()
 
-    val selectedProduct = products.firstOrNull { it.id == selectedProductId }
+    val selectedProduct = selectedProductId?.let { catalogViewModel.getProduct(it) }
 
     // Retour système : détail → écran précédent, Accueil → Catalogue (écran de départ)
     BackHandler(enabled = selectedProduct != null) {
@@ -67,6 +64,8 @@ fun ProductExplorerApp(
     if (selectedProduct != null) {
         ProductDetailRoute(
             product = selectedProduct,
+            isFavorite = catalogViewModel.isFavorite(selectedProduct.id),
+            onFavoriteClick = { catalogViewModel.onFavoriteClick(selectedProduct.id) },
             onBackClick = { selectedProductId = null },
             modifier = modifier
         )
@@ -83,23 +82,22 @@ fun ProductExplorerApp(
             stateHolder.SaveableStateProvider(key = currentTab.name) {
                 when (currentTab) {
                     AppTab.HOME -> ProductHomeScreen(
-                        featuredProduct = products.first(),
-                        onFeaturedProductClick = { selectedProductId = products.first().id },
+                        featuredProduct = catalogViewModel.featuredProduct,
+                        onFeaturedProductClick = {
+                            selectedProductId = catalogViewModel.featuredProduct.id
+                        },
                         onSearchClick = { currentTab = AppTab.CATALOG },
                         onCategoryClick = { category ->
-                            requestedCategory = category
+                            catalogViewModel.onCategorySelected(category)
                             currentTab = AppTab.CATALOG
                         },
                         modifier = Modifier.padding(innerPadding)
                     )
 
                     AppTab.CATALOG -> ProductCatalogContainer(
-                        products = products,
-                        categories = categories,
                         onProductClick = { product -> selectedProductId = product.id },
                         modifier = Modifier.padding(innerPadding),
-                        requestedCategory = requestedCategory,
-                        onRequestedCategoryHandled = { requestedCategory = null }
+                        viewModel = catalogViewModel
                     )
                 }
             }
@@ -122,16 +120,5 @@ fun AppNavigationBar(
                 label = { Text(text = stringResource(tab.labelRes)) }
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ProductExplorerAppPreview() {
-    TPsTheme {
-        ProductExplorerApp(
-            products = sampleProducts(),
-            categories = sampleCategories()
-        )
     }
 }
