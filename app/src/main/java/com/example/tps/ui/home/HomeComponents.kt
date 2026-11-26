@@ -36,9 +36,11 @@ fun HomeHeader(
 
 @Composable
 fun SearchPreviewBar(
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Surface(
+        onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
         tonalElevation = 2.dp
@@ -117,6 +119,7 @@ fun ProductQuickInfoRow(
 
 @Composable
 fun CategoriesSection(
+    onCategoryClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -126,11 +129,11 @@ fun CategoriesSection(
         )
         Spacer(modifier = Modifier.height(8.dp))
         Row {
-            CategoryChip(label = "Smartphones")
+            CategoryChip(label = "Smartphones", onClick = { onCategoryClick("Smartphones") })
             Spacer(modifier = Modifier.weight(1f))
-            CategoryChip(label = "Audio")
+            CategoryChip(label = "Audio", onClick = { onCategoryClick("Audio") })
             Spacer(modifier = Modifier.weight(1f))
-            CategoryChip(label = "Maison")
+            CategoryChip(label = "Maison", onClick = { onCategoryClick("Maison") })
         }
     }
 }
