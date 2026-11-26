@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,13 +27,15 @@ import com.example.tps.data.sampleProducts
 import com.example.tps.ui.components.CategoryRow
 import com.example.tps.ui.theme.TPsTheme
 
-// Composable stateful : possède l'état du catalogue (recherche, filtre stock, favoris)
+// Composable stateful : possède l'état du catalogue (recherche, filtres, favoris)
 @Composable
 fun ProductCatalogContainer(
     products: List<ProductUi>,
     categories: List<String>,
     onProductClick: (ProductUi) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    requestedCategory: String? = null,
+    onRequestedCategoryHandled: () -> Unit = {}
 ) {
     var searchQuery by rememberSaveable {
         mutableStateOf("")
@@ -46,18 +49,25 @@ fun ProductCatalogContainer(
         mutableStateOf(listOf<Int>())
     }
 
-    val filteredProducts = remember(products, searchQuery, showOnlyInStock) {
-        products.filter { product ->
-            val matchesSearch =
-                product.title.contains(searchQuery, ignoreCase = true) ||
-                        product.brand.contains(searchQuery, ignoreCase = true) ||
-                        product.category.contains(searchQuery, ignoreCase = true)
+    var selectedCategory by rememberSaveable {
+        mutableStateOf<String?>(null)
+    }
 
-            val matchesStock =
-                !showOnlyInStock || product.stock > 0
-
-            matchesSearch && matchesStock
+    // Catégorie demandée depuis un autre écran (ex. clic sur une catégorie de l'accueil)
+    LaunchedEffect(requestedCategory) {
+        if (requestedCategory != null) {
+            selectedCategory = requestedCategory
+            onRequestedCategoryHandled()
         }
+    }
+
+    val filteredProducts = remember(products, searchQuery, showOnlyInStock, selectedCategory) {
+        filterProducts(
+            products = products,
+            searchQuery = searchQuery,
+            showOnlyInStock = showOnlyInStock,
+            selectedCategory = selectedCategory
+        )
     }
 
     fun toggleFavorite(productId: Int) {
@@ -71,6 +81,11 @@ fun ProductCatalogContainer(
     ProductCatalogScreen(
         products = filteredProducts,
         categories = categories,
+        selectedCategory = selectedCategory,
+        onCategoryClick = { category ->
+            // Re-cliquer sur la catégorie active la désélectionne
+            selectedCategory = if (selectedCategory == category) null else category
+        },
         searchQuery = searchQuery,
         onSearchQueryChange = { newValue ->
             searchQuery = newValue
@@ -93,6 +108,8 @@ fun ProductCatalogContainer(
 fun ProductCatalogScreen(
     products: List<ProductUi>,
     categories: List<String>,
+    selectedCategory: String?,
+    onCategoryClick: (String) -> Unit,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
     showOnlyInStock: Boolean,
@@ -159,7 +176,11 @@ fun ProductCatalogScreen(
         }
 
         item {
-            CategoryRow(categories = categories)
+            CategoryRow(
+                categories = categories,
+                selectedCategory = selectedCategory,
+                onCategoryClick = onCategoryClick
+            )
         }
 
         items(
@@ -217,6 +238,8 @@ fun ProductCatalogScreenStatelessPreview() {
         ProductCatalogScreen(
             products = sampleProducts(),
             categories = sampleCategories(),
+            selectedCategory = null,
+            onCategoryClick = {},
             searchQuery = "",
             onSearchQueryChange = {},
             showOnlyInStock = false,

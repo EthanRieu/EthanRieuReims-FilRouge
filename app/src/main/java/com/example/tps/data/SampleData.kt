@@ -76,6 +76,32 @@ fun sampleProducts(): List<ProductUi> {
             stock = 52,
             warrantyInformation = "Garantie constructeur : 1 an",
             shippingInformation = "Livraison estimée : 3 jours ouvrés"
+        ),
+        ProductUi(
+            id = 5,
+            title = "Lampe Connectée Lumio",
+            brand = "Lumio",
+            category = "Maison",
+            description = "Une lampe d’ambiance dont on règle la couleur et l’intensité depuis son téléphone.",
+            price = 39.99,
+            discountPercentage = 20.0,
+            rating = 4.3,
+            stock = 27,
+            warrantyInformation = "Garantie constructeur : 2 ans",
+            shippingInformation = "Livraison estimée : 2 à 3 jours ouvrés"
+        ),
+        ProductUi(
+            id = 6,
+            title = "Aspirateur Robot CleanBot",
+            brand = "CleanBot",
+            category = "Maison",
+            description = "Un aspirateur robot silencieux qui cartographie la maison et revient seul à sa base.",
+            price = 249.99,
+            discountPercentage = 10.0,
+            rating = 4.5,
+            stock = 0,
+            warrantyInformation = "Garantie constructeur : 2 ans",
+            shippingInformation = "Produit temporairement indisponible"
         )
     )
 }

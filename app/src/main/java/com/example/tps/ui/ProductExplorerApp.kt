@@ -46,6 +46,7 @@ fun ProductExplorerApp(
 ) {
     var currentTab by rememberSaveable { mutableStateOf(AppTab.CATALOG) }
     var selectedProductId by rememberSaveable { mutableStateOf<Int?>(null) }
+    var requestedCategory by rememberSaveable { mutableStateOf<String?>(null) }
 
     // Conserve l'état de chaque onglet (recherche, filtres, défilement) quand on change d'écran
     val stateHolder = rememberSaveableStateHolder()
@@ -82,7 +83,10 @@ fun ProductExplorerApp(
                         featuredProduct = products.first(),
                         onFeaturedProductClick = { selectedProductId = products.first().id },
                         onSearchClick = { currentTab = AppTab.CATALOG },
-                        onCategoryClick = { currentTab = AppTab.CATALOG },
+                        onCategoryClick = { category ->
+                            requestedCategory = category
+                            currentTab = AppTab.CATALOG
+                        },
                         modifier = Modifier.padding(innerPadding)
                     )
 
@@ -90,7 +94,9 @@ fun ProductExplorerApp(
                         products = products,
                         categories = categories,
                         onProductClick = { product -> selectedProductId = product.id },
-                        modifier = Modifier.padding(innerPadding)
+                        modifier = Modifier.padding(innerPadding),
+                        requestedCategory = requestedCategory,
+                        onRequestedCategoryHandled = { requestedCategory = null }
                     )
                 }
             }
