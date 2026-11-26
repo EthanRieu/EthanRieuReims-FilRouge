@@ -15,8 +15,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.tps.R
 import com.example.tps.data.ProductUi
 import com.example.tps.data.sampleProduct
 import com.example.tps.ui.theme.TPsTheme
@@ -35,6 +37,7 @@ fun ProductDetailRoute(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val addedToCartMessage = stringResource(R.string.added_to_cart, product.title)
 
     Scaffold(
         modifier = modifier,
@@ -51,7 +54,7 @@ fun ProductDetailRoute(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Retour"
+                            contentDescription = stringResource(R.string.back)
                         )
                     }
                 }
@@ -63,7 +66,7 @@ fun ProductDetailRoute(
             product = product,
             onAddToCartClick = {
                 scope.launch {
-                    snackbarHostState.showSnackbar("${product.title} ajouté au panier")
+                    snackbarHostState.showSnackbar(addedToCartMessage)
                 }
             },
             modifier = Modifier.padding(innerPadding)

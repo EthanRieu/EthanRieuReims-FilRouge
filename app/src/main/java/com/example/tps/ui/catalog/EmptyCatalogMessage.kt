@@ -15,8 +15,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.tps.R
 
 // Affiché quand aucun produit ne correspond aux filtres
 @Composable
@@ -38,14 +40,14 @@ fun EmptyCatalogMessage(
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = "Aucun produit ne correspond à votre recherche.",
+            text = stringResource(R.string.empty_catalog),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(12.dp))
         OutlinedButton(onClick = onResetFiltersClick) {
-            Text(text = "Réinitialiser les filtres")
+            Text(text = stringResource(R.string.reset_filters))
         }
     }
 }

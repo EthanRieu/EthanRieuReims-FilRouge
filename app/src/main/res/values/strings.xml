@@ -1,3 +1,61 @@
 <resources>
-    <string name="app_name">TPs</string>
+    <string name="app_name">Product Explorer</string>
+
+    <!-- Navigation -->
+    <string name="tab_home">Accueil</string>
+    <string name="tab_catalog">Catalogue</string>
+    <string name="back">Retour</string>
+
+    <!-- Accueil -->
+    <string name="home_subtitle">Découvrez les produits du moment</string>
+    <string name="home_search_placeholder">Rechercher un produit…</string>
+    <string name="featured_product_title">Produit mis en avant</string>
+    <string name="quick_info_stock">%1$d en stock</string>
+    <string name="categories_title">Catégories</string>
+    <string name="daily_offer_title">Offre du jour</string>
+    <string name="daily_offer_text" formatted="false">Jusqu’à -20 % sur une sélection de produits</string>
+    <string name="badge_new">Nouveau</string>
+
+    <!-- Catalogue -->
+    <string name="catalog_title">Catalogue produits</string>
+    <string name="catalog_subtitle">Explorez une sélection de produits disponibles localement.</string>
+    <string name="search_label">Rechercher un produit</string>
+    <string name="clear_search">Effacer la recherche</string>
+    <plurals name="products_count">
+        <item quantity="one">%1$d produit affiché</item>
+        <item quantity="many">%1$d produits affichés</item>
+        <item quantity="other">%1$d produits affichés</item>
+    </plurals>
+    <string name="filter_in_stock">En stock uniquement</string>
+    <string name="filter_favorites">Favoris (%1$d)</string>
+    <string name="sort_default">Par défaut</string>
+    <string name="sort_price_ascending">Prix croissant</string>
+    <string name="sort_price_descending">Prix décroissant</string>
+    <string name="sort_best_rated">Meilleures notes</string>
+    <string name="empty_catalog">Aucun produit ne correspond à votre recherche.</string>
+    <string name="reset_filters">Réinitialiser les filtres</string>
+
+    <!-- Carte produit -->
+    <string name="see_product">Voir le produit</string>
+    <string name="favorite_add">Ajouter aux favoris</string>
+    <string name="favorite_remove">Retirer des favoris</string>
+    <string name="stock_available">En stock</string>
+    <string name="stock_unavailable">Rupture de stock</string>
+
+    <!-- Détail -->
+    <string name="product_image_description">Image du produit %1$s</string>
+    <string name="discount_label">Remise : %1$s</string>
+    <string name="rating_description">Note du produit</string>
+    <string name="rating_value">%1$s / 5</string>
+    <string name="availability_title">Disponibilité</string>
+    <plurals name="stock_units">
+        <item quantity="one">Stock : %1$d unité</item>
+        <item quantity="many">Stock : %1$d unités</item>
+        <item quantity="other">Stock : %1$d unités</item>
+    </plurals>
+    <string name="description_title">Description</string>
+    <string name="warranty_label">Garantie</string>
+    <string name="add_to_cart">Ajouter au panier</string>
+    <string name="product_unavailable">Produit indisponible</string>
+    <string name="added_to_cart">%1$s ajouté au panier</string>
 </resources>

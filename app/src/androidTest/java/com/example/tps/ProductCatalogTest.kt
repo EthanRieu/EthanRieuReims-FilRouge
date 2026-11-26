@@ -47,8 +47,10 @@ class ProductCatalogTest {
         }
     }
 
+    // Pluriel français : 0 et 1 au singulier
     private fun assertCount(count: Int) {
-        rule.onNodeWithText("$count produit(s) affiché(s)").assertIsDisplayed()
+        val text = if (count <= 1) "$count produit affiché" else "$count produits affichés"
+        rule.onNodeWithText(text).assertIsDisplayed()
     }
 
     @Test

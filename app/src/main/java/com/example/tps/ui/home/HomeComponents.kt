@@ -14,7 +14,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.tps.R
 import com.example.tps.data.ProductUi
 import com.example.tps.ui.components.CategoryChip
 import com.example.tps.ui.format.formatPrice
@@ -26,11 +28,11 @@ fun HomeHeader(
 ) {
     Column(modifier = modifier) {
         Text(
-            text = "Product Explorer",
+            text = stringResource(R.string.app_name),
             style = MaterialTheme.typography.headlineMedium
         )
         Text(
-            text = "Découvrez les produits du moment",
+            text = stringResource(R.string.home_subtitle),
             style = MaterialTheme.typography.bodyMedium
         )
     }
@@ -48,7 +50,7 @@ fun SearchPreviewBar(
         tonalElevation = 2.dp
     ) {
         Text(
-            text = "Rechercher un produit...",
+            text = stringResource(R.string.home_search_placeholder),
             modifier = Modifier.padding(16.dp),
             style = MaterialTheme.typography.bodyMedium
         )
@@ -70,7 +72,7 @@ fun FeaturedProductSection(
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = "Produit mis en avant",
+                text = stringResource(R.string.featured_product_title),
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(modifier = Modifier.height(12.dp))
@@ -90,7 +92,7 @@ fun FeaturedProductSection(
             )
             Spacer(modifier = Modifier.height(12.dp))
             Button(onClick = onClick) {
-                Text(text = "Voir le produit")
+                Text(text = stringResource(R.string.see_product))
             }
         }
     }
@@ -113,7 +115,7 @@ fun ProductQuickInfoRow(
             modifier = Modifier.weight(1f)
         )
         Text(
-            text = "$stock en stock",
+            text = stringResource(R.string.quick_info_stock, stock),
             modifier = Modifier.weight(1f)
         )
     }
@@ -126,7 +128,7 @@ fun CategoriesSection(
 ) {
     Column(modifier = modifier) {
         Text(
-            text = "Catégories",
+            text = stringResource(R.string.categories_title),
             style = MaterialTheme.typography.titleMedium
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -156,11 +158,11 @@ fun DailyOfferBox(
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    text = "Offre du jour",
+                    text = stringResource(R.string.daily_offer_title),
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = "Jusqu’à -20 % sur une sélection de produits",
+                    text = stringResource(R.string.daily_offer_text),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -173,7 +175,7 @@ fun DailyOfferBox(
             tonalElevation = 6.dp
         ) {
             Text(
-                text = "Nouveau",
+                text = stringResource(R.string.badge_new),
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                 style = MaterialTheme.typography.labelMedium
             )

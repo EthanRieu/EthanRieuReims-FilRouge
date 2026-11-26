@@ -15,8 +15,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.tps.R
 import com.example.tps.data.ProductUi
 import com.example.tps.data.sampleProduct
 import com.example.tps.ui.components.DiscountBadge
@@ -84,7 +86,7 @@ fun ProductListItem(
             StockBadge(stock = product.stock)
             Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = onClick) {
-                Text(text = "Voir le produit")
+                Text(text = stringResource(R.string.see_product))
             }
         }
     }

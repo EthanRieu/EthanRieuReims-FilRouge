@@ -25,12 +25,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.tps.R
 import com.example.tps.data.ProductUi
 import com.example.tps.data.sampleCategories
 import com.example.tps.data.sampleProducts
 import com.example.tps.ui.components.CategoryRow
+import com.example.tps.ui.format.frenchPluralQuantity
 import com.example.tps.ui.theme.TPsTheme
 
 // Composable stateful : possède l'état du catalogue (recherche, filtres, favoris)
@@ -166,7 +170,7 @@ fun ProductCatalogScreen(
     ) {
         item {
             Text(
-                text = "Catalogue produits",
+                text = stringResource(R.string.catalog_title),
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -174,7 +178,7 @@ fun ProductCatalogScreen(
 
         item {
             Text(
-                text = "Explorez une sélection de produits disponibles localement.",
+                text = stringResource(R.string.catalog_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground
             )
@@ -185,7 +189,7 @@ fun ProductCatalogScreen(
                 value = searchQuery,
                 onValueChange = onSearchQueryChange,
                 label = {
-                    Text(text = "Rechercher un produit")
+                    Text(text = stringResource(R.string.search_label))
                 },
                 leadingIcon = {
                     Icon(imageVector = Icons.Filled.Search, contentDescription = null)
@@ -195,7 +199,7 @@ fun ProductCatalogScreen(
                         IconButton(onClick = { onSearchQueryChange("") }) {
                             Icon(
                                 imageVector = Icons.Filled.Clear,
-                                contentDescription = "Effacer la recherche"
+                                contentDescription = stringResource(R.string.clear_search)
                             )
                         }
                     }
@@ -218,7 +222,7 @@ fun ProductCatalogScreen(
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "${products.size} produit(s) affiché(s)",
+                    text = pluralStringResource(R.plurals.products_count, frenchPluralQuantity(products.size), products.size),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.weight(1f)

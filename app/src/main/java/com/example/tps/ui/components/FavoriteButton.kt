@@ -8,6 +8,8 @@ import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.example.tps.R
 
 /**
  * Cœur plein / vide. Stateless : affiche isFavorite et signale le clic.
@@ -26,7 +28,7 @@ fun FavoriteButton(
     ) {
         Icon(
             imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-            contentDescription = if (isFavorite) "Retirer des favoris" else "Ajouter aux favoris",
+            contentDescription = stringResource(if (isFavorite) R.string.favorite_remove else R.string.favorite_add),
             tint = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
         )
     }

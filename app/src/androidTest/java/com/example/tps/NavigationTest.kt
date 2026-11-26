@@ -94,17 +94,17 @@ class NavigationTest {
     @Test
     fun la_recherche_est_conservee_en_changeant_d_onglet() {
         rule.onNodeWithText("Rechercher un produit").performTextInput("montre")
-        rule.onNodeWithText("1 produit(s) affiché(s)").assertIsDisplayed()
+        rule.onNodeWithText("1 produit affiché").assertIsDisplayed()
 
         rule.onNodeWithText("Accueil").performClick()
         rule.onNodeWithText("Catalogue").performClick()
-        rule.onNodeWithText("1 produit(s) affiché(s)").assertIsDisplayed()
+        rule.onNodeWithText("1 produit affiché").assertIsDisplayed()
     }
 
     @Test
     fun la_barre_de_recherche_de_l_accueil_ouvre_le_catalogue() {
         rule.onNodeWithText("Accueil").performClick()
-        rule.onNodeWithText("Rechercher un produit...").performClick()
+        rule.onNodeWithText("Rechercher un produit…").performClick()
         rule.onNodeWithText("Catalogue produits").assertIsDisplayed()
     }
 }

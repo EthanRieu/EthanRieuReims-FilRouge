@@ -6,7 +6,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.tps.R
 
 // Petit badge de disponibilité, couleurs issues du thème
 @Composable
@@ -22,7 +24,7 @@ fun StockBadge(
         contentColor = if (inStock) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onErrorContainer
     ) {
         Text(
-            text = if (inStock) "En stock" else "Rupture de stock",
+            text = stringResource(if (inStock) R.string.stock_available else R.string.stock_unavailable),
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
             style = MaterialTheme.typography.labelMedium
         )

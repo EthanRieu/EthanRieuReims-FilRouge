@@ -1,5 +1,7 @@
 package com.example.tps.ui.catalog
 
+import androidx.annotation.StringRes
+import com.example.tps.R
 import com.example.tps.data.ProductUi
 
 /**
@@ -33,11 +35,11 @@ fun filterProducts(
     }
 }
 
-enum class SortOrder(val label: String) {
-    DEFAULT("Par défaut"),
-    PRICE_ASCENDING("Prix croissant"),
-    PRICE_DESCENDING("Prix décroissant"),
-    BEST_RATED("Meilleures notes")
+enum class SortOrder(@StringRes val labelRes: Int) {
+    DEFAULT(R.string.sort_default),
+    PRICE_ASCENDING(R.string.sort_price_ascending),
+    PRICE_DESCENDING(R.string.sort_price_descending),
+    BEST_RATED(R.string.sort_best_rated)
 }
 
 // Trie la liste (appliqué après les filtres)

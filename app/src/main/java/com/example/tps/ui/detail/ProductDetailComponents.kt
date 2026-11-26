@@ -15,9 +15,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.tps.R
 import com.example.tps.ui.format.formatDiscount
 import com.example.tps.ui.format.formatPrice
+import com.example.tps.ui.format.formatRating
+import com.example.tps.ui.format.frenchPluralQuantity
 
 @Composable
 fun ProductImage(
@@ -26,7 +31,7 @@ fun ProductImage(
 ) {
     Image(
         painter = painterResource(id = android.R.drawable.ic_menu_gallery),
-        contentDescription = "Image du produit $productTitle",
+        contentDescription = stringResource(R.string.product_image_description, productTitle),
         modifier = modifier
     )
 }
@@ -69,7 +74,7 @@ fun ProductPriceCard(
                 style = MaterialTheme.typography.headlineSmall
             )
             Text(
-                text = "Remise : ${formatDiscount(discountPercentage)}",
+                text = stringResource(R.string.discount_label, formatDiscount(discountPercentage)),
                 style = MaterialTheme.typography.bodyMedium
             )
         }
@@ -84,10 +89,10 @@ fun ProductRating(
     Row(modifier = modifier) {
         Icon(
             imageVector = Icons.Default.Star,
-            contentDescription = "Note du produit"
+            contentDescription = stringResource(R.string.rating_description)
         )
         Text(
-            text = "$rating / 5",
+            text = stringResource(R.string.rating_value, formatRating(rating)),
             modifier = Modifier.padding(start = 8.dp)
         )
     }
@@ -104,11 +109,11 @@ fun ProductAvailabilityCard(
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = "Disponibilité",
+                text = stringResource(R.string.availability_title),
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = "Stock : $stock unités",
+                text = pluralStringResource(R.plurals.stock_units, frenchPluralQuantity(stock), stock),
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
@@ -126,7 +131,7 @@ fun ProductDescription(
 ) {
     Column(modifier = modifier) {
         Text(
-            text = "Description",
+            text = stringResource(R.string.description_title),
             style = MaterialTheme.typography.titleMedium
         )
         Text(
@@ -147,7 +152,7 @@ fun ProductWarrantyField(
         onValueChange = {},
         readOnly = true,
         label = {
-            Text(text = "Garantie")
+            Text(text = stringResource(R.string.warranty_label))
         },
         modifier = modifier
     )
@@ -164,6 +169,6 @@ fun AddToCartButton(
         modifier = modifier,
         enabled = enabled
     ) {
-        Text(text = if (enabled) "Ajouter au panier" else "Produit indisponible")
+        Text(text = stringResource(if (enabled) R.string.add_to_cart else R.string.product_unavailable))
     }
 }

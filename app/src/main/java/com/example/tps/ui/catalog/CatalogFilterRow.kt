@@ -12,7 +12,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.tps.R
 
 // Filtres rapides du catalogue : stock et favoris
 @Composable
@@ -31,7 +33,7 @@ fun CatalogFilterRow(
         FilterChip(
             selected = showOnlyInStock,
             onClick = onToggleStockFilter,
-            label = { Text(text = "En stock uniquement") },
+            label = { Text(text = stringResource(R.string.filter_in_stock)) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.Inventory2,
@@ -43,7 +45,7 @@ fun CatalogFilterRow(
         FilterChip(
             selected = showOnlyFavorites,
             onClick = onToggleFavoritesFilter,
-            label = { Text(text = "Favoris ($favoriteCount)") },
+            label = { Text(text = stringResource(R.string.filter_favorites, favoriteCount)) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.Favorite,

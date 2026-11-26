@@ -1,6 +1,7 @@
 package com.example.tps.ui
 
 import androidx.activity.compose.BackHandler
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
@@ -18,7 +19,9 @@ import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.tps.R
 import com.example.tps.data.ProductUi
 import com.example.tps.data.sampleCategories
 import com.example.tps.data.sampleProducts
@@ -27,9 +30,9 @@ import com.example.tps.ui.detail.ProductDetailRoute
 import com.example.tps.ui.home.ProductHomeScreen
 import com.example.tps.ui.theme.TPsTheme
 
-enum class AppTab(val label: String, val icon: ImageVector) {
-    HOME("Accueil", Icons.Filled.Home),
-    CATALOG("Catalogue", Icons.AutoMirrored.Filled.List)
+enum class AppTab(@StringRes val labelRes: Int, val icon: ImageVector) {
+    HOME(R.string.tab_home, Icons.Filled.Home),
+    CATALOG(R.string.tab_catalog, Icons.AutoMirrored.Filled.List)
 }
 
 /**
@@ -116,7 +119,7 @@ fun AppNavigationBar(
                 selected = tab == currentTab,
                 onClick = { onTabClick(tab) },
                 icon = { Icon(imageVector = tab.icon, contentDescription = null) },
-                label = { Text(text = tab.label) }
+                label = { Text(text = stringResource(tab.labelRes)) }
             )
         }
     }
