@@ -1,6 +1,7 @@
 package com.example.tps.ui.catalog
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -11,9 +12,14 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.tps.data.ProductUi
+import com.example.tps.data.sampleProduct
+import com.example.tps.ui.components.FavoriteButton
+import com.example.tps.ui.theme.TPsTheme
 
 @Composable
 fun ProductListItem(
@@ -36,16 +42,24 @@ fun ProductListItem(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            Text(
-                text = product.title,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                text = product.brand,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.secondary
-            )
+            Row(verticalAlignment = Alignment.Top) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = product.title,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = product.brand,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
+                FavoriteButton(
+                    isFavorite = isFavorite,
+                    onClick = onFavoriteClick
+                )
+            }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "${product.price} € • ★ ${product.rating}",
@@ -53,18 +67,22 @@ fun ProductListItem(
                 color = MaterialTheme.colorScheme.primary
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = onFavoriteClick) {
-                Text(
-                    text = if (isFavorite) {
-                        "Retirer des favoris"
-                    } else {
-                        "Ajouter aux favoris"
-                    }
-                )
-            }
             Button(onClick = onClick) {
                 Text(text = "Voir le produit")
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ProductListItemPreview() {
+    TPsTheme {
+        ProductListItem(
+            product = sampleProduct(),
+            isFavorite = true,
+            onFavoriteClick = {},
+            onClick = {}
+        )
     }
 }

@@ -12,7 +12,9 @@ fun filterProducts(
     products: List<ProductUi>,
     searchQuery: String,
     showOnlyInStock: Boolean,
-    selectedCategory: String? = null
+    selectedCategory: String? = null,
+    showOnlyFavorites: Boolean = false,
+    favoriteProductIds: List<Int> = emptyList()
 ): List<ProductUi> {
     val query = searchQuery.trim()
     return products.filter { product ->
@@ -25,6 +27,8 @@ fun filterProducts(
 
         val matchesCategory = selectedCategory == null || product.category == selectedCategory
 
-        matchesSearch && matchesStock && matchesCategory
+        val matchesFavorites = !showOnlyFavorites || product.id in favoriteProductIds
+
+        matchesSearch && matchesStock && matchesCategory && matchesFavorites
     }
 }

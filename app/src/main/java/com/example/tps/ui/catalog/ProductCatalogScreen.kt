@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -53,6 +52,10 @@ fun ProductCatalogContainer(
         mutableStateOf<String?>(null)
     }
 
+    var showOnlyFavorites by rememberSaveable {
+        mutableStateOf(false)
+    }
+
     // Catégorie demandée depuis un autre écran (ex. clic sur une catégorie de l'accueil)
     LaunchedEffect(requestedCategory) {
         if (requestedCategory != null) {
@@ -61,12 +64,16 @@ fun ProductCatalogContainer(
         }
     }
 
-    val filteredProducts = remember(products, searchQuery, showOnlyInStock, selectedCategory) {
+    val filteredProducts = remember(
+        products, searchQuery, showOnlyInStock, selectedCategory, showOnlyFavorites, favoriteProductIds
+    ) {
         filterProducts(
             products = products,
             searchQuery = searchQuery,
             showOnlyInStock = showOnlyInStock,
-            selectedCategory = selectedCategory
+            selectedCategory = selectedCategory,
+            showOnlyFavorites = showOnlyFavorites,
+            favoriteProductIds = favoriteProductIds
         )
     }
 
@@ -98,6 +105,10 @@ fun ProductCatalogContainer(
         onFavoriteClick = { productId ->
             toggleFavorite(productId)
         },
+        showOnlyFavorites = showOnlyFavorites,
+        onToggleFavoritesFilter = {
+            showOnlyFavorites = !showOnlyFavorites
+        },
         onProductClick = onProductClick,
         modifier = modifier
     )
@@ -116,6 +127,8 @@ fun ProductCatalogScreen(
     onToggleStockFilter: () -> Unit,
     favoriteProductIds: List<Int>,
     onFavoriteClick: (Int) -> Unit,
+    showOnlyFavorites: Boolean,
+    onToggleFavoritesFilter: () -> Unit,
     onProductClick: (ProductUi) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -154,17 +167,13 @@ fun ProductCatalogScreen(
         }
 
         item {
-            Button(
-                onClick = onToggleStockFilter
-            ) {
-                Text(
-                    text = if (showOnlyInStock) {
-                        "Afficher tous les produits"
-                    } else {
-                        "Afficher uniquement les produits en stock"
-                    }
-                )
-            }
+            CatalogFilterRow(
+                showOnlyInStock = showOnlyInStock,
+                onToggleStockFilter = onToggleStockFilter,
+                showOnlyFavorites = showOnlyFavorites,
+                favoriteCount = favoriteProductIds.size,
+                onToggleFavoritesFilter = onToggleFavoritesFilter
+            )
         }
 
         item {
@@ -246,6 +255,8 @@ fun ProductCatalogScreenStatelessPreview() {
             onToggleStockFilter = {},
             favoriteProductIds = listOf(1),
             onFavoriteClick = {},
+            showOnlyFavorites = false,
+            onToggleFavoritesFilter = {},
             onProductClick = {}
         )
     }
