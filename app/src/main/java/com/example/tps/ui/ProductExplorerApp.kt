@@ -12,6 +12,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -62,9 +63,12 @@ fun ProductExplorerApp(
     }
 
     if (selectedProduct != null) {
+        // Collecté ici pour que le cœur du détail se mette à jour
+        val catalogState by catalogViewModel.uiState.collectAsState()
+
         ProductDetailRoute(
             product = selectedProduct,
-            isFavorite = catalogViewModel.isFavorite(selectedProduct.id),
+            isFavorite = selectedProduct.id in catalogState.favoriteProductIds,
             onFavoriteClick = { catalogViewModel.onFavoriteClick(selectedProduct.id) },
             onBackClick = { selectedProductId = null },
             modifier = modifier

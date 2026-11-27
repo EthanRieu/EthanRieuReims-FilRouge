@@ -21,8 +21,9 @@ Application fil rouge construite TP après TP : un explorateur de produits avec 
 | **TP8** | Catalogue interactif | `remember`, `mutableStateOf`, `rememberSaveable` : recherche, filtre stock, favoris |
 | **TP9** | State Hoisting | `ProductCatalogContainer` (stateful) / `ProductCatalogScreen` (stateless) : les données descendent, les événements remontent |
 | **TP10** | Gestion de l'écran avec un ViewModel | `ViewModel`, `viewModel()`, `mutableStateOf` avec `private set`, fonctions d'évènement, cycle de vie |
+| **TP11** | Mise à jour dynamique avec StateFlow | `ProductCatalogUiState`, `MutableStateFlow` / `StateFlow`, `asStateFlow`, `update` + `copy`, `collectAsState()` |
 
-Chaque fin de TP est marquée par un tag Git : `tp4-final` · `tp5-final` · `tp6-final` · `tp7-final` · `tp8-final` · `tp9-final` · `tp10-final`.
+Chaque fin de TP est marquée par un tag Git : `tp4-final` · `tp5-final` · `tp6-final` · `tp7-final` · `tp8-final` · `tp9-final` · `tp10-final` · `tp11-final`.
 
 ## Fonctionnalités réalisées en autonomie
 
@@ -50,7 +51,7 @@ com.example.tps
 │   └── SampleData.kt            produits et catégories locaux
 └── ui/
     ├── ProductExplorerApp.kt    navigation (onglets, détail, retour)
-    ├── catalog/                 container + écran stateless, carte, filtres, tri, état vide
+    ├── catalog/                 UiState, ViewModel, container + écran stateless, carte, filtres, tri
     ├── detail/                  fiche produit (TP4) + barre du haut / snackbar
     ├── home/                    écran d'accueil (TP5)
     ├── components/              composants partagés (catégories, favori, badges)
@@ -58,10 +59,24 @@ com.example.tps
     └── theme/                   couleurs, typographie et formes Material 3
 ```
 
+Flux de données du catalogue :
+
+```text
+ProductCatalogViewModel      publie StateFlow<ProductCatalogUiState>
+        ↓
+ProductCatalogContainer      collectAsState()
+        ↓
+ProductCatalogScreen         affiche les valeurs (stateless)
+        ↓
+ProductListItem              affiche un produit
+```
+
+Les actions de l'utilisateur remontent vers le ViewModel, qui publie un nouvel état. Il est partagé avec l'écran de détail et l'accueil : un favori ajouté depuis la fiche apparaît aussitôt dans le catalogue.
+
 Principes suivis :
 
 - composables **stateless** qui reçoivent des valeurs et des callbacks, avec un `modifier: Modifier = Modifier` ;
-- l'état est **remonté** au plus près de l'endroit qui en a besoin ;
+- l'état de l'écran est un objet **immuable** unique, modifiable seulement par le ViewModel ;
 - la logique de filtrage et de tri est faite de **fonctions pures** (`ProductFilters.kt`), testées sans Android ;
 - tous les textes sont dans `res/values/strings.xml`, avec des **pluriels** (règle française : 0 et 1 au singulier) ;
 - une **preview** pour chaque écran et pour les composants principaux, en clair et en sombre pour le catalogue.
@@ -69,10 +84,11 @@ Principes suivis :
 ## Tests
 
 ```bash
-./gradlew test                  # tests unitaires (filtres, tri, formatage)
+./gradlew test                  # tests unitaires (ViewModel, filtres, tri, formatage)
 ./gradlew connectedAndroidTest  # tests d'interface Compose (émulateur ou appareil requis)
 ```
 
+- `ProductCatalogViewModelTest` (JVM) : état publié après chaque action, immuabilité, réinitialisation.
 - `ProductFiltersTest`, `FormattersTest`, `FrenchPluralTest` (JVM) : recherche, stock, catégorie, favoris, filtres combinés, tris, formats français.
 - `ProductCatalogTest` (Compose) : le catalogue avec son état, et l'écran stateless qui affiche ce qu'il reçoit et fait remonter les événements.
 - `NavigationTest` (Compose) : onglets, ouverture du détail, retour (bouton et système), panier, état conservé entre les onglets.

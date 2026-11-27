@@ -17,6 +17,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
@@ -32,27 +34,29 @@ import com.example.tps.ui.components.CategoryRow
 import com.example.tps.ui.format.frenchPluralQuantity
 import com.example.tps.ui.theme.TPsTheme
 
-// Passerelle entre le ViewModel et l'écran stateless : lit l'état et transmet les callbacks
+// Passerelle entre le ViewModel et l'écran stateless : collecte l'état et transmet les callbacks
 @Composable
 fun ProductCatalogContainer(
     onProductClick: (ProductUi) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ProductCatalogViewModel = viewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     ProductCatalogScreen(
-        products = viewModel.filteredProducts,
-        categories = viewModel.categories,
-        selectedCategory = viewModel.selectedCategory,
+        products = uiState.products,
+        categories = uiState.categories,
+        selectedCategory = uiState.selectedCategory,
         onCategoryClick = viewModel::onCategoryClick,
-        searchQuery = viewModel.searchQuery,
+        searchQuery = uiState.searchQuery,
         onSearchQueryChange = viewModel::onSearchQueryChange,
-        showOnlyInStock = viewModel.showOnlyInStock,
+        showOnlyInStock = uiState.showOnlyInStock,
         onToggleStockFilter = viewModel::onToggleStockFilter,
-        favoriteProductIds = viewModel.favoriteProductIds,
+        favoriteProductIds = uiState.favoriteProductIds,
         onFavoriteClick = viewModel::onFavoriteClick,
-        showOnlyFavorites = viewModel.showOnlyFavorites,
+        showOnlyFavorites = uiState.showOnlyFavorites,
         onToggleFavoritesFilter = viewModel::onToggleFavoritesFilter,
-        sortOrder = viewModel.sortOrder,
+        sortOrder = uiState.sortOrder,
         onSortOrderChange = viewModel::onSortOrderChange,
         onResetFilters = viewModel::onResetFilters,
         onProductClick = onProductClick,

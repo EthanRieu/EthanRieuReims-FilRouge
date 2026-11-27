@@ -1,17 +1,18 @@
 package com.example.tps.ui.catalog
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.tps.data.ProductUi
 import com.example.tps.data.sampleCategories
 import com.example.tps.data.sampleProducts
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 /**
- * Possède l'état de l'écran catalogue et réagit aux actions de l'utilisateur.
+ * Publie l'état de l'écran catalogue et réagit aux actions de l'utilisateur.
  *
- * L'interface lit les valeurs (private set : elle ne peut pas les modifier directement)
+ * Seul le ViewModel modifie _uiState ; l'interface observe uiState (lecture seule)
  * et appelle les fonctions on…() pour signaler un évènement.
  * Le ViewModel survit à la recréation de l'écran (rotation).
  */
@@ -20,90 +21,87 @@ class ProductCatalogViewModel : ViewModel() {
     // Données
 
     private val allProducts: List<ProductUi> = sampleProducts()
-
-    val categories: List<String> = sampleCategories()
+    private val allCategories: List<String> = sampleCategories()
 
     // Produit mis en avant sur l'écran d'accueil
     val featuredProduct: ProductUi = allProducts.first()
 
     // État de l'écran
 
-    var searchQuery by mutableStateOf("")
-        private set
-
-    var showOnlyInStock by mutableStateOf(false)
-        private set
-
-    var favoriteProductIds by mutableStateOf(listOf<Int>())
-        private set
-
-    var selectedCategory by mutableStateOf<String?>(null)
-        private set
-
-    var showOnlyFavorites by mutableStateOf(false)
-        private set
-
-    var sortOrder by mutableStateOf(SortOrder.DEFAULT)
-        private set
-
-    // Liste affichée, recalculée à partir de l'état courant
-    val filteredProducts: List<ProductUi>
-        get() = sortProducts(
-            products = filterProducts(
-                products = allProducts,
-                searchQuery = searchQuery,
-                showOnlyInStock = showOnlyInStock,
-                selectedCategory = selectedCategory,
-                showOnlyFavorites = showOnlyFavorites,
-                favoriteProductIds = favoriteProductIds
-            ),
-            sortOrder = sortOrder
+    private val _uiState = MutableStateFlow(
+        ProductCatalogUiState(
+            products = allProducts,
+            categories = allCategories
         )
+    )
+
+    val uiState: StateFlow<ProductCatalogUiState> = _uiState.asStateFlow()
 
     fun getProduct(productId: Int): ProductUi? = allProducts.firstOrNull { it.id == productId }
 
-    fun isFavorite(productId: Int): Boolean = favoriteProductIds.contains(productId)
-
     // Actions de l'utilisateur
 
-    fun onSearchQueryChange(newValue: String) {
-        searchQuery = newValue
+    fun onSearchQueryChange(newValue: String) = updateState {
+        it.copy(searchQuery = newValue)
     }
 
-    fun onToggleStockFilter() {
-        showOnlyInStock = !showOnlyInStock
+    fun onToggleStockFilter() = updateState {
+        it.copy(showOnlyInStock = !it.showOnlyInStock)
     }
 
-    fun onFavoriteClick(productId: Int) {
-        favoriteProductIds = if (favoriteProductIds.contains(productId)) {
-            favoriteProductIds - productId
+    fun onFavoriteClick(productId: Int) = updateState {
+        val newFavoriteIds = if (productId in it.favoriteProductIds) {
+            it.favoriteProductIds - productId
         } else {
-            favoriteProductIds + productId
+            it.favoriteProductIds + productId
         }
+        it.copy(favoriteProductIds = newFavoriteIds)
     }
 
     // Re-cliquer sur la catégorie active la désélectionne
-    fun onCategoryClick(category: String) {
-        selectedCategory = if (selectedCategory == category) null else category
+    fun onCategoryClick(category: String) = updateState {
+        it.copy(selectedCategory = if (it.selectedCategory == category) null else category)
     }
 
     // Sélection directe, par exemple depuis une catégorie de l'écran d'accueil
-    fun onCategorySelected(category: String) {
-        selectedCategory = category
+    fun onCategorySelected(category: String) = updateState {
+        it.copy(selectedCategory = category)
     }
 
-    fun onToggleFavoritesFilter() {
-        showOnlyFavorites = !showOnlyFavorites
+    fun onToggleFavoritesFilter() = updateState {
+        it.copy(showOnlyFavorites = !it.showOnlyFavorites)
     }
 
-    fun onSortOrderChange(newOrder: SortOrder) {
-        sortOrder = newOrder
+    fun onSortOrderChange(newOrder: SortOrder) = updateState {
+        it.copy(sortOrder = newOrder)
     }
 
-    fun onResetFilters() {
-        searchQuery = ""
-        showOnlyInStock = false
-        selectedCategory = null
-        showOnlyFavorites = false
+    fun onResetFilters() = updateState {
+        it.copy(
+            searchQuery = "",
+            showOnlyInStock = false,
+            selectedCategory = null,
+            showOnlyFavorites = false
+        )
+    }
+
+    // Applique le changement avec update + copy, puis recalcule la liste affichée
+    private fun updateState(change: (ProductCatalogUiState) -> ProductCatalogUiState) {
+        _uiState.update { currentState ->
+            val newState = change(currentState)
+            newState.copy(products = visibleProducts(newState))
+        }
+    }
+
+    private fun visibleProducts(state: ProductCatalogUiState): List<ProductUi> {
+        val filtered = filterProducts(
+            products = allProducts,
+            searchQuery = state.searchQuery,
+            showOnlyInStock = state.showOnlyInStock,
+            selectedCategory = state.selectedCategory,
+            showOnlyFavorites = state.showOnlyFavorites,
+            favoriteProductIds = state.favoriteProductIds
+        )
+        return sortProducts(filtered, state.sortOrder)
     }
 }
