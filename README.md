@@ -20,8 +20,9 @@ Application fil rouge construite TP après TP : un explorateur de produits avec 
 | **TP7** | Personnalisation graphique | Material Design 3 : `ColorScheme` clair / sombre, `Typography`, `Shapes` |
 | **TP8** | Catalogue interactif | `remember`, `mutableStateOf`, `rememberSaveable` : recherche, filtre stock, favoris |
 | **TP9** | State Hoisting | `ProductCatalogContainer` (stateful) / `ProductCatalogScreen` (stateless) : les données descendent, les événements remontent |
+| **TP10** | Gestion de l'écran avec un ViewModel | `ViewModel`, `viewModel()`, `mutableStateOf` avec `private set`, fonctions d'évènement, cycle de vie |
 
-Chaque fin de TP est marquée par un tag Git : `tp4-final` · `tp5-final` · `tp6-final` · `tp7-final` · `tp8-final` · `tp9-final`.
+Chaque fin de TP est marquée par un tag Git : `tp4-final` · `tp5-final` · `tp6-final` · `tp7-final` · `tp8-final` · `tp9-final` · `tp10-final`.
 
 ## Fonctionnalités réalisées en autonomie
 
